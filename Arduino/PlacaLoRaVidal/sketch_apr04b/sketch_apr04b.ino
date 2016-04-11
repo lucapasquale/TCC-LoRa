@@ -59,7 +59,7 @@ void LoRaConfig()
   LoRaBlink(500);
 
   Serial.print("addr:\t\t");                                                                                 //Set device address for your device!!!!!!!!!!!
-  Serial1.write("mac set devaddr 020155A1\r\n");
+  Serial1.write("mac set devaddr 020155B0\r\n");
   delay(50);
   while (Serial1.available()) Serial.write(Serial1.read());
   LoRaBlink(500);

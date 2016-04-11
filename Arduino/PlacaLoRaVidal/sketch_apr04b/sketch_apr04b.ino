@@ -4,150 +4,140 @@ SoftwareSerial Serial1(2, 3);
 int counter;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial1.begin(57600);
 
   delay(2000);
   LoRaConfig();
-  Serial.println("");
-  Serial.println("");
+  Serial.println("------------------------------");
+  Serial.println("------------------------------");
   delay(2000);
-
-  
 }
 
 void loop() {
   counter++;
   String baseData = "hi-";
   String dataToSend = baseData + counter;
-  Serial.println("");
-  LoRaSendAndReceive(dataToSend);
+  LoRaSendAndReceive();
   Serial.println("LoRa status:");
-  delay(10000);
+  delay(30000);
 }
 
-void LoRaSendAndReceive(String message)
+void LoRaSendAndReceive(String data)
 {
-  int messageLength = message.length();
-    Serial.print("Sending: ");
-    Serial.println(message);
-    Serial1.write("mac tx uncnf 1 ");
-    
-    
-    for (int i = 0; i < messageLength; i++)
-    {
-      Serial1.print(message.charAt(i));
-      LoRaBlink(100);  
-      
-    }
-    Serial1.write("\r\n");
-    delay(100);
-    
-    Serial.println("RN2483 status:");
-    while(Serial1.available()) 
-    {
-      Serial.print((char)Serial1.read());
-    }
+  Serial.println("");
+  Serial.print("Sending: ");
+  Serial.println(data);
+
+
+  Serial1.write("mac tx uncnf 1 ");
+  Serial1.print(data);
+  Serial1.write("\r\n");
+
+  delay(1000);
+  while (Serial1.available()) Serial.write(Serial1.read());
+  delay(5000);
+  while (Serial1.available()) Serial.write(Serial1.read());
 }
 
 void LoRaConfig()
 {
-  Serial.print("Reset: ");                                                                                //Device reset
+  Serial.print("Reset:\t\t");                                                                                //Device reset
   Serial1.write("sys reset\r\n");
   delay(1000);
   while (Serial1.available()) Serial.write(Serial1.read());
   LoRaBlink(500);
+
   //Receive device model
-  Serial.print("Device:  ");
+  Serial.print("Device:\t\t");
   Serial1.write("sys get ver\r\n");
   delay(50);
   while (Serial1.available()) Serial.write(Serial1.read());
   LoRaBlink(500);
 
-  Serial.print("Battery: ");                                                                              //Receive voltage feedback
-  Serial1.write("sys get vdd\r\n");
-  delay(50);
-  while (Serial1.available()) Serial.write(Serial1.read());
-  LoRaBlink(500);
-
-  Serial.print("EUI: ");                                                                                  //
+  Serial.print("EUI:\t\t");                                                                                  //
   Serial1.write("sys get hweui\r\n");
   delay(50);
   while (Serial1.available()) Serial.write(Serial1.read());
   LoRaBlink(500);
 
-  Serial.print("addr: ");                                                                                 //Set device address for your device!!!!!!!!!!!
-  Serial1.write("mac set devaddr 02010101\r\n");
+  Serial.print("addr:\t\t");                                                                                 //Set device address for your device!!!!!!!!!!!
+  Serial1.write("mac set devaddr 020155A1\r\n");
   delay(50);
   while (Serial1.available()) Serial.write(Serial1.read());
   LoRaBlink(500);
 
-  Serial.print("nwkskey: ");                                                                              //Set NwkSkey key for your device!!!!!!!!!!!
+  Serial.print("nwkskey:\t");                                                                              //Set NwkSkey key for your device!!!!!!!!!!!
   Serial1.write("mac set nwkskey 2B7E151628AED2A6ABF7158809CF4F3C\r\n");
   delay(50);
   while (Serial1.available()) Serial.write(Serial1.read());
   LoRaBlink(500);
 
-  Serial.print("appskey: ");
+  Serial.print("appskey:\t");
   Serial1.write("mac set appskey 2B7E151628AED2A6ABF7158809CF4F3C\r\n");                                  //Set AppSkey for your device!!!!!!!!!!
   delay(50);
   while (Serial1.available()) Serial.write(Serial1.read());
   LoRaBlink(500);
 
-  Serial.print("adr: ");
-  Serial1.write("mac set adr off\r\n");
+  Serial.print("adr:\t\t");
+  Serial1.write("mac set adr on\r\n");
   delay(50);
   while (Serial1.available()) Serial.write(Serial1.read());
   LoRaBlink(500);
 
-  Serial.print("data rate: ");
-  Serial1.write("mac get dr\r\n");
+  //  Serial.print("data rate: ");
+  //  Serial1.write("mac get dr\r\n");
+  //  delay(50);
+  //  while (Serial1.available()) Serial.write(Serial1.read());
+  //  LoRaBlink(500);
+  //
+  //  Serial.print("ch: ");
+  //  Serial1.write("mac get ch\r\n");
+  //  delay(50);
+  //  while (Serial1.available()) Serial.write(Serial1.read());
+  //  LoRaBlink(500);
+  //
+  //  Serial.print("band: ");
+  //  Serial1.write("mac get band\r\n");
+  //  delay(50);
+  //  while (Serial1.available()) Serial.write(Serial1.read());
+  //  LoRaBlink(500);
+
+  //  Serial.print("rx delay1: ");
+  //  Serial1.write("mac get rxdelay1\r\n");
+  //  delay(50);
+  //  while (Serial1.available()) Serial.write(Serial1.read());
+  //  LoRaBlink(500);
+  //
+  //  Serial.print("rx delay2: ");
+  //  Serial1.write("mac get rxdelay2\r\n");
+  //  delay(50);
+  //  while (Serial1.available()) Serial.write(Serial1.read());
+  //  LoRaBlink(500);
+
+  Serial.print("Pwr:\t\t");
+  Serial1.write("mac set pwridx 10\r\n");
   delay(50);
   while (Serial1.available()) Serial.write(Serial1.read());
   LoRaBlink(500);
 
-  Serial.print("ch: ");
-  Serial1.write("mac get ch\r\n");
-  delay(50);
+  Serial.print("Saved\t\t");
+  Serial1.write("mac save\r\n");
+  delay(1000);
   while (Serial1.available()) Serial.write(Serial1.read());
   LoRaBlink(500);
 
-  Serial.print("band: ");
-  Serial1.write("mac get band\r\n");
-  delay(50);
-  while (Serial1.available()) Serial.write(Serial1.read());
-  LoRaBlink(500);
-
-
-  Serial.print("rx delay1: ");
-  Serial1.write("mac get rxdelay1\r\n");
-  delay(50);
-  while (Serial1.available()) Serial.write(Serial1.read());
-  LoRaBlink(500);
-
-  Serial.print("rx delay2: ");
-  Serial1.write("mac get rxdelay2\r\n");
-  delay(50);
-  while (Serial1.available()) Serial.write(Serial1.read());
-  LoRaBlink(500);
-
-  Serial.print("Pwr: ");
-  Serial1.write("mac set pwridx 1\r\n");
-  delay(50);
-  while (Serial1.available()) Serial.write(Serial1.read());
-  LoRaBlink(500);
-
-  Serial.print("Join: ");
+  Serial.print("Join:\t\t");
   Serial1.write("mac join abp\r\n");
-  delay(50);
+  delay(500);
   while (Serial1.available()) Serial.write(Serial1.read());
   LoRaBlink(500);
 
-  Serial.print("status: ");
-  Serial1.write("mac get status\r\n");
-  delay(50);
-  while (Serial1.available()) Serial.write(Serial1.read());
-  LoRaBlink(500);
+  //  Serial.print("status: ");
+  //  Serial1.write("mac get status\r\n");
+  //  delay(50);
+  //  while (Serial1.available()) Serial.write(Serial1.read());
+  //  LoRaBlink(500);
 }
 
 void LoRaBlink(int timeOn) {

@@ -16,10 +16,7 @@ void setup() {
 
 void loop() {
   counter++;
-  String baseData = "hi-";
-  String dataToSend = baseData + counter;
-  LoRaSendAndReceive();
-  Serial.println("LoRa status:");
+  LoRaSendAndReceive(String(counter));
   delay(30000);
 }
 

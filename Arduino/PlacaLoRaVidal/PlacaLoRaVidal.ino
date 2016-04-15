@@ -35,9 +35,9 @@ void LoRaSendUncnf(int data)
   Serial.println(data);
 #endif
 
-  Serial.write("mac tx uncnf 1 ");
-  Serial.print(data);
-  Serial.write("\r\n");
+  Serial1.write("mac tx uncnf 1 ");
+  Serial1.print(data);
+  Serial1.write("\r\n");
 
   WaitResponse(1000);                             //receive ok from module
 
@@ -80,7 +80,7 @@ void LoRaConfig()
 #ifdef modoDebug
   Serial.print("Set DevADDr/NwkAddr: ");
 #endif
-  Serial1.write("mac set devaddr 020155A0\r\n");
+  Serial1.write("mac set devaddr 020155B0\r\n");
   WaitResponse(1000);
 
 #ifdef modoDebug
@@ -111,17 +111,17 @@ void LoRaConfig()
 #ifdef modoDebug
   Serial.println("Desabilitando canais 8 a 71");
 #endif
-  for (int loop = 8; loop < 72; loop++)      // desligo do 8 ao 71
+  for (int i = 8; i < 72; i++)      // desligo do 8 ao 71
   {
     Serial1.write("mac set ch status ");
-    Serial1.print(loop);
+    Serial1.print(i);
     Serial1.write(" off\r\n");
 
     WaitResponse(200);
 
 #ifdef modoDebug
     Serial.print("Canal ");
-    Serial.print(loop);
+    Serial.print(i);
     Serial.println(" desativado.");
 #endif
   }
@@ -142,6 +142,7 @@ void LoRaConfig()
   Serial.println("------------------------------");
   Serial.println("-------LoRa Configurado-------");
   Serial.println("------------------------------");
+  Serial.println("");
 #endif
   delay(2000);
 }
@@ -157,12 +158,12 @@ void LoRaWriteGpio(int gpiopin, int state)
     Serial.println(" ligado");
 #endif
 
-  Serial.write("sys set pindig GPIO");
-  Serial.print(gpiopin);
+  Serial1.write("sys set pindig GPIO");
+  Serial1.print(gpiopin);
   if (state == 0)
-    Serial.write(" 0\r\n");
+    Serial1.write(" 0\r\n");
   else
-    Serial.write(" 1\r\n");
+    Serial1.write(" 1\r\n");
 
   WaitResponse(200);                             //receive ok from module
 }

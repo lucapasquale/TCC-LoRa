@@ -6,7 +6,7 @@
 
 //-----------Bibliotecas e Definicoes-----------------------------
 #define modoDebug;
-//#define modoTimer;
+#define modoTimer;
 
 #include <DHT.h>
 DHT dht(DHTPIN, DHTTYPE);
@@ -50,7 +50,7 @@ void loop() {
   if (f_wdt == 1)
   {
     cont += 1;
-    if (cont >= 110) { //110*8 = 880s = 14min 40s
+    if (cont >= 1) { //110*8 = 880s = 14min 40s
       LeSensores();
       int tempInt = round(temp * 10);
       LoRaSendUncnf(tempInt);
@@ -62,8 +62,9 @@ void loop() {
     enterSleep();
   }
 #else
+  temp = dht.readTemperature();
   cont++;
-  LoRaSendUncnf(cont);
+  LoRaSendUncnf(temp);
   delay(delayMessage);
 #endif
 }

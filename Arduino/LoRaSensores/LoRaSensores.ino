@@ -6,12 +6,16 @@
 
 //-----------Bibliotecas e Definicoes-----------------------------
 #define modoDebug;
-#define modoTimer;
+//#define modoTimer;
 
+#include <TinyGPS++.h>
+TinyGPSPlus gps;
 #include <DHT.h>
 DHT dht(DHTPIN, DHTTYPE);
 #include <SoftwareSerial.h>
-SoftwareSerial Serial1(2, 3);
+SoftwareSerial SerialLoRa(2, 3);
+SoftwareSerial SerialGPS(9, 10);
+
 
 #ifdef modoTimer
 #include <avr/sleep.h>
@@ -20,12 +24,14 @@ SoftwareSerial Serial1(2, 3);
 #endif
 
 //---------------Variaveis--------------------------------------------
-float umid;   //Valor umidade (%)
-float temp;   //Valor temperatura (Celsius)
-float pres;   //Valor pressao (hPa)
+int umid;   //Valor umidade (%)
+int temp;   //Valor temperatura (Celsius)
+int pres;   //Valor pressao (hPa)
+long GPSlat;
+long GPSlng;
 
 volatile int f_wdt = 1;
-volatile int cont = 0;
+volatile int cont = 110;
 
 //--------------Arduino------------------------------------------
 void setup() {
@@ -34,7 +40,8 @@ void setup() {
 #endif
 
   dht.begin();
-  Serial1.begin(57600);
+  SerialLoRa.begin(57600);
+  SerialGPS.begin(9600);
   LoRaConfig();
 
 #ifdef modoTimer
@@ -50,21 +57,35 @@ void loop() {
   if (f_wdt == 1)
   {
     cont += 1;
-    if (cont >= 1) { //110*8 = 880s = 14min 40s
+    if (cont >= 110) { //110*8 = 880s = 14min 40s
       LeSensores();
       int tempInt = round(temp * 10);
+      int umidInt = round(umid * 10 + 1000);
       LoRaSendUncnf(tempInt);
+      LoRaSendUncnf(umidInt);
       cont = 0;
     }
-
     //Limpa o flag e entra em Sleep
     f_wdt = 0;
     enterSleep();
   }
 #else
-  temp = dht.readTemperature();
-  cont++;
-  LoRaSendUncnf(temp);
+  //  Serial.println("Getting location");
+  //  if (gps.location.isValid())
+  //  {
+  GPSlat = (long)round(2447.65027 * 10000);
+  GPSlng = (long)round(gps.location.lng() * 10000);
+#ifdef modoDebug
+  Serial.print(F("Location: "));
+  Serial.print(gps.location.lat(), 6);
+  Serial.print(F(","));
+  Serial.println(gps.location.lng(), 6);
+#endif
+  LoRaSendUncnf(GPSlat);
+  LoRaSendUncnf(GPSlng);
+  //  } else {
+  //    LoRaSendUncnf(-123);
+  //  }
   delay(delayMessage);
 #endif
 }
@@ -95,12 +116,12 @@ void enterSleep(void)
 
 //----------------Sensores-------------------------------------------
 void LeSensores() {
-  umid = dht.readHumidity();        //Le valor umidade em %
-  temp = dht.readTemperature();     //Le valor temperatura em Celsius
+  umid = round(10 * dht.readHumidity());      //Le valor umidade em %
+  temp = round(10 * dht.readTemperature());     //Le valor temperatura em Celsius
 
   float vout = analogRead(A0);    //Le valor pino analogico sensor de pressao
   vout = (vout * 5.0) / 1023.0;   //Converte valor 0-1023 para 0-5V
-  pres = 222 * vout + 106;        //Converte o valor para hPa
+  pres = round(222 * vout + 106);        //Converte o valor para hPa
 
 #ifdef debugMode
   if (isnan(umid) || isnan(temp)) {
@@ -121,7 +142,7 @@ void LeSensores() {
 }
 
 //---------------------LoRa--------------------------------
-void LoRaSendUncnf(int data)
+void LoRaSendUncnf(long data)
 {
   LoRaWriteGpio(5, 1);
   delay(50);
@@ -135,9 +156,9 @@ void LoRaSendUncnf(int data)
   Serial.println(data);
 #endif
 
-  Serial1.write("mac tx uncnf 1 ");
-  Serial1.print(data);
-  Serial1.write("\r\n");
+  SerialLoRa.write("mac tx uncnf 1 ");
+  SerialLoRa.print(data);
+  SerialLoRa.write("\r\n");
 
   WaitResponse(1000);                             //receive ok from module
 
@@ -157,7 +178,7 @@ void WaitResponse(int timeDelay)
 
   //// aqui mostra o retorno do modulo. devo ler e se nao for OK, joined, ... resetar
 #ifdef modoDebug
-  while (Serial1.available()) Serial.write(Serial1.read());
+  while (SerialLoRa.available()) Serial.write(SerialLoRa.read());
   Serial.println("");
 #endif
 }
@@ -168,43 +189,43 @@ void LoRaConfig()
 #ifdef modoDebug
   Serial.print("Reset: ");
 #endif
-  Serial1.write("sys reset\r\n");
+  SerialLoRa.write("sys reset\r\n");
   WaitResponse(2000);
 
   //#ifdef modoDebug
   //  Serial.print("Set DevEui: ");
   //#endif
-  //  Serial1.write("mac set deveui 0004A300020155A0\r\n");
+  //  SerialLoRa.write("mac set deveui 0004A300020155A0\r\n");
   //  WaitResponse(1000);
 
 #ifdef modoDebug
   Serial.print("Set DevADDr/NwkAddr: ");
 #endif
-  Serial1.write("mac set devaddr 020155B0\r\n");
+  SerialLoRa.write("mac set devaddr 020155B0\r\n");
   WaitResponse(1000);
 
 #ifdef modoDebug
   Serial.print("Set AppSkey: ");
 #endif
-  Serial1.write("mac set appskey 2B7E151628AED2A6ABF7158809CF4F3C\r\n");
+  SerialLoRa.write("mac set appskey 2B7E151628AED2A6ABF7158809CF4F3C\r\n");
   WaitResponse(1000);
 
 #ifdef modoDebug
   Serial.print("Set NwkSkey: ");
 #endif
-  Serial1.write("mac set nwkskey 2B7E151628AED2A6ABF7158809CF4F3C\r\n");
+  SerialLoRa.write("mac set nwkskey 2B7E151628AED2A6ABF7158809CF4F3C\r\n");
   WaitResponse(1000);
 
 #ifdef modoDebug
   Serial.print("Set ADR On: ");
 #endif
-  Serial1.write("mac set adr on\r\n");
+  SerialLoRa.write("mac set adr on\r\n");
   WaitResponse(1000);
 
 #ifdef modoDebug
   Serial.print("Set Pwr: ");
 #endif
-  Serial1.write("radio set pwr 20\r\n");
+  SerialLoRa.write("radio set pwr 20\r\n");
   WaitResponse(1000);
 
   // Canais off - Ex.: mac set ch status 24 off<0d0a>
@@ -213,9 +234,9 @@ void LoRaConfig()
 #endif
   for (int i = 8; i < 72; i++)      // desligo do 8 ao 71
   {
-    Serial1.write("mac set ch status ");
-    Serial1.print(i);
-    Serial1.write(" off\r\n");
+    SerialLoRa.write("mac set ch status ");
+    SerialLoRa.print(i);
+    SerialLoRa.write(" off\r\n");
 
     WaitResponse(200);
 
@@ -229,13 +250,13 @@ void LoRaConfig()
 #ifdef modoDebug
   Serial.print("SAVE: ");
 #endif
-  Serial1.write("mac save\r\n");
+  SerialLoRa.write("mac save\r\n");
   WaitResponse(1000);
 
 #ifdef modoDebug
   Serial.print("Join: ");
 #endif
-  Serial1.write("mac join abp\r\n");
+  SerialLoRa.write("mac join abp\r\n");
   WaitResponse(1000);
 
 #ifdef modoDebug
@@ -249,21 +270,21 @@ void LoRaConfig()
 
 void LoRaWriteGpio(int gpiopin, int state)
 {
-#ifdef modoDebug
-  Serial.print("GPIO ");
-  Serial.print(gpiopin);
-  if (state == 0)
-    Serial.println(" desligado");
-  else
-    Serial.println(" ligado");
-#endif
+  //#ifdef modoDebug
+  //  Serial.print("GPIO ");
+  //  Serial.print(gpiopin);
+  //  if (state == 0)
+  //    Serial.println(" desligado");
+  //  else
+  //    Serial.println(" ligado");
+  //#endif
 
-  Serial1.write("sys set pindig GPIO");
-  Serial1.print(gpiopin);
+  SerialLoRa.write("sys set pindig GPIO");
+  SerialLoRa.print(gpiopin);
   if (state == 0)
-    Serial1.write(" 0\r\n");
+    SerialLoRa.write(" 0\r\n");
   else
-    Serial1.write(" 1\r\n");
+    SerialLoRa.write(" 1\r\n");
 
   WaitResponse(200);                             //receive ok from module
 }

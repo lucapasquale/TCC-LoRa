@@ -6,7 +6,7 @@
 
 //-----------Bibliotecas e Definicoes-----------------------------
 #define modoDebug;
-//#define modoTimer;
+#define modoTimer;
 
 #include <TinyGPS++.h>
 TinyGPSPlus gps;
@@ -29,6 +29,7 @@ int temp;   //Valor temperatura (Celsius)
 int pres;   //Valor pressao (hPa)
 long GPSlat;
 long GPSlng;
+long varTeste;
 
 volatile int f_wdt = 1;
 volatile int cont = 110;
@@ -59,10 +60,13 @@ void loop() {
     cont += 1;
     if (cont >= 110) { //110*8 = 880s = 14min 40s
       LeSensores();
-      int tempInt = round(temp * 10);
-      int umidInt = round(umid * 10 + 1000);
-      LoRaSendUncnf(tempInt);
-      LoRaSendUncnf(umidInt);
+      int tempInt = round(temp);
+      int umidInt = round(umid);
+      LoRaSendUncnf(tempInt, 10);
+      LoRaSendUncnf(umidInt, 20);
+
+//      LoRaSendUncnf(varTeste);
+//      varTeste++;
       cont = 0;
     }
     //Limpa o flag e entra em Sleep
@@ -142,7 +146,7 @@ void LeSensores() {
 }
 
 //---------------------LoRa--------------------------------
-void LoRaSendUncnf(long data)
+void LoRaSendUncnf(long data, int port)
 {
   LoRaWriteGpio(5, 1);
   delay(50);
@@ -156,7 +160,9 @@ void LoRaSendUncnf(long data)
   Serial.println(data);
 #endif
 
-  SerialLoRa.write("mac tx uncnf 1 ");
+  SerialLoRa.write("mac tx uncnf ");
+  SerialLoRa.print(port);
+  SerialLoRa.write(" ");
   SerialLoRa.print(data);
   SerialLoRa.write("\r\n");
 
@@ -178,7 +184,7 @@ void WaitResponse(int timeDelay)
 
   //// aqui mostra o retorno do modulo. devo ler e se nao for OK, joined, ... resetar
 #ifdef modoDebug
-  while (SerialLoRa.available()) Serial.write(SerialLoRa.read());
+  while (Serial1.available()) Serial.write(Serial1.read());
   Serial.println("");
 #endif
 }
@@ -189,43 +195,43 @@ void LoRaConfig()
 #ifdef modoDebug
   Serial.print("Reset: ");
 #endif
-  SerialLoRa.write("sys reset\r\n");
+  Serial1.write("sys reset\r\n");
   WaitResponse(2000);
 
-  //#ifdef modoDebug
-  //  Serial.print("Set DevEui: ");
-  //#endif
-  //  SerialLoRa.write("mac set deveui 0004A300020155A0\r\n");
-  //  WaitResponse(1000);
+  #ifdef modoDebug
+    Serial.print("Set DevEui: ");
+  #endif
+    Serial1.write("mac set deveui 0004A30B001A674B\r\n");
+    WaitResponse(1000);
 
 #ifdef modoDebug
   Serial.print("Set DevADDr/NwkAddr: ");
 #endif
-  SerialLoRa.write("mac set devaddr 020155B0\r\n");
+  Serial1.write("mac set devaddr 020155B0\r\n");
   WaitResponse(1000);
 
 #ifdef modoDebug
   Serial.print("Set AppSkey: ");
 #endif
-  SerialLoRa.write("mac set appskey 2B7E151628AED2A6ABF7158809CF4F3C\r\n");
+  Serial1.write("mac set appskey 2B7E151628AED2A6ABF7158809CF4F3C\r\n");
   WaitResponse(1000);
 
 #ifdef modoDebug
   Serial.print("Set NwkSkey: ");
 #endif
-  SerialLoRa.write("mac set nwkskey 2B7E151628AED2A6ABF7158809CF4F3C\r\n");
+  Serial1.write("mac set nwkskey 2B7E151628AED2A6ABF7158809CF4F3C\r\n");
   WaitResponse(1000);
 
 #ifdef modoDebug
   Serial.print("Set ADR On: ");
 #endif
-  SerialLoRa.write("mac set adr on\r\n");
+  Serial1.write("mac set adr on\r\n");
   WaitResponse(1000);
 
 #ifdef modoDebug
   Serial.print("Set Pwr: ");
 #endif
-  SerialLoRa.write("radio set pwr 20\r\n");
+  Serial1.write("radio set pwr 20\r\n");
   WaitResponse(1000);
 
   // Canais off - Ex.: mac set ch status 24 off<0d0a>
@@ -234,9 +240,9 @@ void LoRaConfig()
 #endif
   for (int i = 8; i < 72; i++)      // desligo do 8 ao 71
   {
-    SerialLoRa.write("mac set ch status ");
-    SerialLoRa.print(i);
-    SerialLoRa.write(" off\r\n");
+    Serial1.write("mac set ch status ");
+    Serial1.print(i);
+    Serial1.write(" off\r\n");
 
     WaitResponse(200);
 
@@ -250,13 +256,13 @@ void LoRaConfig()
 #ifdef modoDebug
   Serial.print("SAVE: ");
 #endif
-  SerialLoRa.write("mac save\r\n");
+  Serial1.write("mac save\r\n");
   WaitResponse(1000);
 
 #ifdef modoDebug
   Serial.print("Join: ");
 #endif
-  SerialLoRa.write("mac join abp\r\n");
+  Serial1.write("mac join abp\r\n");
   WaitResponse(1000);
 
 #ifdef modoDebug

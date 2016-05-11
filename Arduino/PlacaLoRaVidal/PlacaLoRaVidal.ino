@@ -71,11 +71,11 @@ void LoRaConfig()
   Serial1.write("sys reset\r\n");
   WaitResponse(2000);
 
-  //#ifdef modoDebug
-  //  Serial.print("Set DevEui: ");
-  //#endif
-  //  Serial1.write("mac set deveui 0004A300020155A0\r\n");
-  //  WaitResponse(1000);
+  #ifdef modoDebug
+    Serial.print("Set DevEui: ");
+  #endif
+    Serial1.write("mac set deveui 0004A30B001A674B\r\n");
+    WaitResponse(1000);
 
 #ifdef modoDebug
   Serial.print("Set DevADDr/NwkAddr: ");

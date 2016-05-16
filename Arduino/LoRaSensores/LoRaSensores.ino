@@ -13,7 +13,7 @@ TinyGPSPlus gps;
 #include <DHT.h>
 DHT dht(DHTPIN, DHTTYPE);
 #include <SoftwareSerial.h>
-SoftwareSerial SerialLoRa(2, 3);
+SoftwareSerial Serial1(2, 3);
 SoftwareSerial SerialGPS(9, 10);
 
 
@@ -24,12 +24,18 @@ SoftwareSerial SerialGPS(9, 10);
 #endif
 
 //---------------Variaveis--------------------------------------------
-int umid;   //Valor umidade (%)
-int temp;   //Valor temperatura (Celsius)
-int pres;   //Valor pressao (hPa)
+long umid;   //Valor umidade (%)
+long temp;   //Valor temperatura (Celsius)
+long pres;   //Valor pressao (hPa)
 long GPSlat;
 long GPSlng;
-long varTeste;
+
+long sensores[5];
+//1: Temperatura
+//2: Umidade
+//3: Pressao
+//4: Longitude
+//5: Latitude
 
 volatile int f_wdt = 1;
 volatile int cont = 110;
@@ -41,7 +47,7 @@ void setup() {
 #endif
 
   dht.begin();
-  SerialLoRa.begin(57600);
+  Serial1.begin(57600);
   SerialGPS.begin(9600);
   LoRaConfig();
 
@@ -60,13 +66,9 @@ void loop() {
     cont += 1;
     if (cont >= 110) { //110*8 = 880s = 14min 40s
       LeSensores();
-      int tempInt = round(temp);
-      int umidInt = round(umid);
-      LoRaSendUncnf(tempInt, 10);
-      LoRaSendUncnf(umidInt, 20);
-
-//      LoRaSendUncnf(varTeste);
-//      varTeste++;
+      LoRaSendUncnf(temp, 10);
+      LoRaSendUncnf(umid, 20);
+      LoRaSendUncnf(pres, 30);
       cont = 0;
     }
     //Limpa o flag e entra em Sleep
@@ -74,11 +76,7 @@ void loop() {
     enterSleep();
   }
 #else
-  //  Serial.println("Getting location");
-  //  if (gps.location.isValid())
-  //  {
-  GPSlat = (long)round(2447.65027 * 10000);
-  GPSlng = (long)round(gps.location.lng() * 10000);
+
 #ifdef modoDebug
   Serial.print(F("Location: "));
   Serial.print(gps.location.lat(), 6);
@@ -87,9 +85,6 @@ void loop() {
 #endif
   LoRaSendUncnf(GPSlat);
   LoRaSendUncnf(GPSlng);
-  //  } else {
-  //    LoRaSendUncnf(-123);
-  //  }
   delay(delayMessage);
 #endif
 }
@@ -127,7 +122,11 @@ void LeSensores() {
   vout = (vout * 5.0) / 1023.0;   //Converte valor 0-1023 para 0-5V
   pres = round(222 * vout + 106);        //Converte o valor para hPa
 
-#ifdef debugMode
+  sensores[1] = temp;
+  sensores[2] = umid;
+  sensores[3] = pres;
+
+#ifdef ModoDebug
   if (isnan(umid) || isnan(temp)) {
     Serial.println("Failed to read from DHT sensor!");
     return;
@@ -157,14 +156,25 @@ void LoRaSendUncnf(long data, int port)
 #ifdef modoDebug
   Serial.println("");
   Serial.print("Sending: ");
-  Serial.println(data);
+  Serial.print(data);
+//  for (int j = 0; j < sizeof(sensores) / sizeof(long); j++) {
+//      Serial.print(data[j]);
+//      Serial.print(" ");
+//  }
+;
 #endif
 
-  SerialLoRa.write("mac tx uncnf ");
-  SerialLoRa.print(port);
-  SerialLoRa.write(" ");
-  SerialLoRa.print(data);
-  SerialLoRa.write("\r\n");
+  Serial1.write("mac tx uncnf ");
+  Serial1.print(port);
+  Serial1.write(" ");
+  Serial1.print(data);
+
+//  for (int i = 0; i < sizeof(data) / sizeof(long); i++) {
+//    Serial1.write(" ");
+//    Serial1.print(data[i]);
+//  }
+
+  Serial1.write("\r\n");
 
   WaitResponse(1000);                             //receive ok from module
 
@@ -276,21 +286,21 @@ void LoRaConfig()
 
 void LoRaWriteGpio(int gpiopin, int state)
 {
-  //#ifdef modoDebug
-  //  Serial.print("GPIO ");
-  //  Serial.print(gpiopin);
-  //  if (state == 0)
-  //    Serial.println(" desligado");
-  //  else
-  //    Serial.println(" ligado");
-  //#endif
-
-  SerialLoRa.write("sys set pindig GPIO");
-  SerialLoRa.print(gpiopin);
+#ifdef modoDebug
+  Serial.print("GPIO ");
+  Serial.print(gpiopin);
   if (state == 0)
-    SerialLoRa.write(" 0\r\n");
+    Serial.println(" desligado");
   else
-    SerialLoRa.write(" 1\r\n");
+    Serial.println(" ligado");
+#endif
+
+  Serial1.write("sys set pindig GPIO");
+  Serial1.print(gpiopin);
+  if (state == 0)
+    Serial1.write(" 0\r\n");
+  else
+    Serial1.write(" 1\r\n");
 
   WaitResponse(200);                             //receive ok from module
 }

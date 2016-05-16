@@ -82,18 +82,18 @@ void loop()
   if(f_wdt == 1)
   {
     cont += 1;
-    if (cont >= 110){ //110*8 = 880s = 14min 40s 
+    if (cont >= 1){ //110*8 = 880s = 14min 40s 
       //LeSensores();
       temp = dht.readTemperature();
       temp = constrain(temp,10.0,35.5); //Temp min = 10, Temp max = 35.5
       temp = (temp - 10.0)* 10;         //Altera valor da temp para ficar entre 0 e 255
       byte tempByte = (byte)temp;       //Transforma em byte
 
-      EEPROM.write(addr, tempByte);  
-      
-      addr = addr + 1;
-      if (addr == EEPROM.length()) 
-        addr = 0;
+//      EEPROM.write(addr, tempByte);  
+//      
+//      addr = addr + 1;
+//      if (addr == EEPROM.length()) 
+//        addr = 0;
               
       cont = 0;    
     }

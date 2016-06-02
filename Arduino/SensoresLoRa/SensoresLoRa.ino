@@ -33,19 +33,19 @@ void loop() {
   LeSensores();
   LoRaSendUncnf(dadosEnviar);
 
-  for (int t = 0; t < 6 * 15; t++){
+  for (int t = 0; t < 6 * 15; t++) {
     delay(delayMessage);
-  } 
+  }
 }
 
 String transformHex(int num, int precision) {
-     char tmp[16];
-     char format[128];
+  char tmp[16];
+  char format[128];
 
-     sprintf(format, "%%.%dX", precision);
+  sprintf(format, "%%.%dX", precision);
 
-     sprintf(tmp, format, num);
-     return tmp;
+  sprintf(tmp, format, num);
+  return tmp;
 }
 
 //-----------------------Sesnsores------------------------------------------
@@ -112,11 +112,11 @@ void LoRaConfig()
   SerialLoRa.write("sys reset\r\n");
   WaitResponse(2000);
 
-  #ifdef modoDebug
-    Serial.print("Set DevEui: ");
-  #endif
-    SerialLoRa.write("mac set deveui 0004A30B001A674B\r\n");
-    WaitResponse(1000);
+#ifdef modoDebug
+  Serial.print("Set DevEui: ");
+#endif
+  SerialLoRa.write("mac set deveui 0004A30B001A674B\r\n");
+  WaitResponse(1000);
 
 #ifdef modoDebug
   Serial.print("Set DevADDr/NwkAddr: ");

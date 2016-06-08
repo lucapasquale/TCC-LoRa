@@ -4,7 +4,7 @@ url = 'https://artimar.orbiwise.com/rest/nodes/0004A30B001A674B/payloads/ul'
 
 ## Conecta no API da orbiwise, ignorando a verificacao HTTPS
 from requests.auth import HTTPBasicAuth
-r = requests.get(url, auth=HTTPBasicAuth('maua_ceun', 'Maua2016'), verify = False)
+r = requests.get(url, auth=HTTPBasicAuth('maua_ceun', 'Maua2016'))
 
 ## Pega o JSON e o ordena pela data recebida
 json_string = r.text

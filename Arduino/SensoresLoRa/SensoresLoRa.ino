@@ -17,7 +17,7 @@ SoftwareSerial SerialGPS(9, 10);
 
 //-----------------------Variaveis-------------------------------------------
 String dadosEnviar;
-unsigned long dadosLong[3]; //0 = temp, 1 = umid, 2 = pres
+long dadosLong[3]; //0 = temp, 1 = umid, 2 = pres
 
 //-----------------------Arduino----------------------------------------------
 void setup() {
@@ -34,7 +34,13 @@ void loop() {
   LoRaSendUncnf(dadosEnviar);
 
   for (int t = 0; t < 6 * 15; t++) {
-    delay(delayMessage);
+    delay(delayMessage / 2);
+
+    SerialLoRa.write("sys set pindig GPIO5 1\r\n");
+    delay(500);
+    SerialLoRa.write("sys set pindig GPIO5 0\r\n");
+
+    delay(delayMessage / 2);
   }
 }
 
@@ -60,6 +66,10 @@ void LeSensores() {
   dadosEnviar = "";
   for (int i = 0; i < (sizeof(dadosLong) / sizeof(unsigned long)); i++) {
     dadosEnviar += transformHex(dadosLong[i], 4);
+
+#ifdef modoDebug
+    Serial.print("Valor "); Serial.print(i); Serial.print(": "); Serial.println(dadosLong[i]);
+#endif
   }
 }
 
@@ -78,7 +88,7 @@ void LoRaSendUncnf(String data)
   Serial.println(data);
 #endif
 
-  SerialLoRa.write("mac tx uncnf 1 ");
+  SerialLoRa.write("mac tx uncnf 5 ");
   SerialLoRa.print(data);
   SerialLoRa.write("\r\n");
 

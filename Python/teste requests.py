@@ -29,11 +29,14 @@ for l in range(0,len(jsonSorted)):
     jsonSorted[l]["pres"] = jsonSorted[l]["dataFrame"][8:12]
     jsonSorted[l]["pres"] = int(jsonSorted[l]["pres"], 16)
 
+    jsonSorted[l]["dia"] = jsonSorted[l]["timestamp"][0:10]
+    jsonSorted[l]["hora"] = jsonSorted[l]["timestamp"][11:23]
+
 ## Grava como CSV
 outputFile = open('testeCSV.csv', 'w')
 outputWriter = csv.writer(outputFile)
-outputWriter.writerow(['Temperatura', 'Umidade', 'Pressao', 'Data', 'Dados HEX'])
+outputWriter.writerow(['Temperatura', 'Umidade', 'Pressao', 'Dia', 'Hora', 'Dados HEX'])
 for l in range(0,len(jsonSorted)):
     outputWriter.writerow([jsonSorted[l]["temp"],jsonSorted[l]["umid"], jsonSorted[l]["pres"],
-                           jsonSorted[l]["timestamp"], jsonSorted[l]["dataFrame"]])
+                           jsonSorted[l]["dia"], jsonSorted[l]["hora"], jsonSorted[l]["dataFrame"]])
 outputFile.close()

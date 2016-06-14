@@ -31,13 +31,13 @@ void setup() {
 
 void loop() {
   LeSensores();
-  LoRaSendUncnf(dadosEnviar, 13);
+  LoRaSendUncnf(dadosEnviar);
 
   for (int t = 0; t < 6 * 15; t++) {
     delay(delayMessage / 2);
 
     SerialLoRa.write("sys set pindig GPIO5 1\r\n");
-    delay(100);
+    delay(500);
     SerialLoRa.write("sys set pindig GPIO5 0\r\n");
 
     delay(delayMessage / 2);
@@ -74,18 +74,21 @@ void LeSensores() {
 }
 
 //-----------------------LoRa---------------------------------------------
-void LoRaSendUncnf(String data, int port)
+void LoRaSendUncnf(String data)
 {
+  LoRaWriteGpio(5, 1);
+  delay(50);
+
+  LoRaWriteGpio(5, 0);
+  delay(950);
+
 #ifdef modoDebug
+  Serial.println("");
   Serial.print("Sending: ");
-  Serial.print(data);
-  Serial.print(" on port: ");
-  Serial.println(port);
+  Serial.println(data);
 #endif
 
-  SerialLoRa.write("mac tx uncnf ");
-  SerialLoRa.print(port);
-  SerialLoRa.write(" ");
+  SerialLoRa.write("mac tx uncnf 5 ");
   SerialLoRa.print(data);
   SerialLoRa.write("\r\n");
 
@@ -94,12 +97,11 @@ void LoRaSendUncnf(String data, int port)
   WaitResponse(5000);                         //receive mac_tx_ok from data sent
 
   LoRaWriteGpio(5, 1);
-  delay(100);
+  delay(50);
+
   LoRaWriteGpio(5, 0);
-  delay(200);
-  LoRaWriteGpio(5, 1);
-  delay(100);
-  LoRaWriteGpio(5, 0);
+  delay(950);
+
 }
 
 void WaitResponse(int timeDelay)
@@ -113,10 +115,7 @@ void WaitResponse(int timeDelay)
 
 void LoRaConfig()
 {
-  LoRaWriteGpio(5, 1);
   delay(2000);
-  LoRaWriteGpio(5, 0);
-  delay(100);
 #ifdef modoDebug
   Serial.print("Reset: ");
 #endif
@@ -189,11 +188,6 @@ void LoRaConfig()
   SerialLoRa.write("mac join abp\r\n");
   WaitResponse(1000);
 
-  LoRaWriteGpio(5, 1);
-  delay(2000);
-  LoRaWriteGpio(5, 0);
-  delay(100);
-  
 #ifdef modoDebug
   Serial.println("------------------------------");
   Serial.println("-------LoRa Configurado-------");

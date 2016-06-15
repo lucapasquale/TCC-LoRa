@@ -1,10 +1,11 @@
 import json, requests, base64, csv
 
 url = 'https://artimar.orbiwise.com/rest/nodes/0004A30B001A674B/payloads/ul'
-
-## Conecta no API da orbiwise, ignorando a verificacao HTTPS
+acc = 'maua_ceun'
+password = raw_input("Senha da conta Orbiwise: ")
+## Conecta no API da orbiwise
 from requests.auth import HTTPBasicAuth
-r = requests.get(url, auth=HTTPBasicAuth('maua_ceun', 'Maua2016'))
+r = requests.get(url, auth=HTTPBasicAuth(acc, password))
 
 ## Pega o JSON e o ordena pela data recebida
 json_string = r.text
@@ -35,8 +36,9 @@ for l in range(0,len(jsonSorted)):
 ## Grava como CSV
 outputFile = open('testeCSV.csv', 'w')
 outputWriter = csv.writer(outputFile)
-outputWriter.writerow(['Temperatura', 'Umidade', 'Pressao', 'Dia', 'Hora', 'Dados HEX'])
+outputWriter.writerow(['Temperatura', 'Umidade', 'Pressao', 'Dia', 'Hora', 'fcnt', 'Dados HEX'])
 for l in range(0,len(jsonSorted)):
     outputWriter.writerow([jsonSorted[l]["temp"],jsonSorted[l]["umid"], jsonSorted[l]["pres"],
-                           jsonSorted[l]["dia"], jsonSorted[l]["hora"], jsonSorted[l]["dataFrame"]])
+                           jsonSorted[l]["dia"], jsonSorted[l]["hora"], jsonSorted[l]["fcnt"],
+                           jsonSorted[l]["dataFrame"]])
 outputFile.close()

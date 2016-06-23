@@ -1,34 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Forms;
 using RestSharp;
 using RestSharp.Authenticators;
 using Newtonsoft.Json;
 
-namespace WpfApplication1
+namespace WindowsFormsApplication1
 {
-    public partial class MainWindow : Window
-    { 
-        public List<JsonObject> Dados = new List<JsonObject>();
+    public partial class Form1 : Form
+    {
+        public List<JsonObject> dados = new List<JsonObject>();
 
-
-        public MainWindow()
+        public Form1()
         {
             InitializeComponent();
+
             GetJsonObjects();
 
-            dgSimple.ItemsSource = Dados;
+            for (int n = 0; n < numericUpDown1.Value; n++)
+            {
+                chart2.Series["Temperatura"].Points.AddXY(dados[n].horario, dados[n].temperatura);
+            }
+
+
         }
 
         void GetJsonObjects()
@@ -55,7 +55,16 @@ namespace WpfApplication1
                 n.pressao = int.Parse(n.dataFrame.Substring(8, 4), System.Globalization.NumberStyles.HexNumber);
             }
 
-            Dados = listaJSON.OrderByDescending(o => o.horario).ToList();
+            dados = listaJSON.OrderByDescending(o => o.horario).ToList();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            chart2.Series[0].Points.Clear();
+            for (int n = 0; n < numericUpDown1.Value; n++)
+            {
+                chart2.Series["Temperatura"].Points.AddXY(dados[n].horario, dados[n].temperatura);
+            }
         }
     }
 
@@ -67,7 +76,7 @@ namespace WpfApplication1
         public DateTime horario { get; set; }
 
         public int Id { get; set; }
-        public string timeStamp { get; set; } 
+        public string timeStamp { get; set; }
         public string dataFrame { get; set; }
         public int fcnt { get; set; }
         public int port { get; set; }

@@ -1,19 +1,33 @@
-﻿namespace WpfApplication1
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using OxyPlot;
+using OxyPlot.Series;
+
+namespace WpfApplication1
 {
-    using System;
-
-    using OxyPlot;
-    using OxyPlot.Series;
-
     public class MainViewModel
     {
+        public PlotModel ModelTemp { get; private set; }
+        public PlotModel ModelUmid { get; private set; }
+
+        public LineSeries retaTemp = new LineSeries();
+        public LineSeries retaUmid = new LineSeries();
+
+
         public MainViewModel()
         {
-            this.MyModel = new PlotModel { Title = "Example 1" };
-            this.MyModel.Series.Add(new FunctionSeries(Math.Cos, 0, 10, 0.1, "cos(x)"));
+            this.ModelTemp = new PlotModel { Title = "Temperatura" };
+            this.ModelUmid = new PlotModel { Title = "Umidade" };
         }
 
-        public PlotModel MyModel { get; private set; }
-        
+        public void Plot()
+        {
+            this.ModelUmid.Series.Add(retaTemp);
+            this.ModelUmid.Series.Add(retaUmid);
+        }
+
     }
 }

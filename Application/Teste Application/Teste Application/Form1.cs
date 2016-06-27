@@ -39,11 +39,14 @@ namespace Teste_Application
 
             foreach (DataObject n in listaJSON)
             {
+                //Pega o horario em DateTime
                 n.horario = DateTime.Parse(n.timeStamp);
 
+                //Passa de base64 para HEX e remove os '-' entre os bytes
                 byte[] data = Convert.FromBase64String(n.dataFrame);
                 n.dataFrame = BitConverter.ToString(data).Replace("-", string.Empty);
 
+                //Converte de HEX para decimal
                 n.temperatura = int.Parse(n.dataFrame.Substring(0, 4), System.Globalization.NumberStyles.HexNumber) / 10f;
                 n.umidade = int.Parse(n.dataFrame.Substring(4, 4), System.Globalization.NumberStyles.HexNumber) / 10f;
                 n.pressao = int.Parse(n.dataFrame.Substring(8, 4), System.Globalization.NumberStyles.HexNumber);
@@ -55,13 +58,10 @@ namespace Teste_Application
         void ConfigureForm()
         {
             grafico.ChartAreas[0].AxisX.Title = "Horário";
-            grafico.ChartAreas[0].AxisX.LabelStyle.Format = "HH:mm\nd/M";
-            grafico.ChartAreas[0].AxisX.Interval = 1;
             grafico.ChartAreas[0].AxisX.IntervalType = System.Windows.Forms.DataVisualization.Charting.DateTimeIntervalType.Hours;
-            grafico.Series[0].Points.Clear();
-
-            dateTimePicker1.MinDate = DateTime.Today.AddDays(-7);
-            dateTimePicker1.MaxDate = DateTime.Today;
+            grafico.ChartAreas[0].AxisX.Interval = 1;
+            grafico.ChartAreas[0].AxisX.LabelStyle.Format = "HH:mm\nd/M";
+            grafico.Series[0].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastPoint;
 
             comboBox1.SelectedIndex = 0;
 
@@ -73,48 +73,37 @@ namespace Teste_Application
         void PlotGraph()
         {
             grafico.Series[0].Points.Clear();
-            int offset = trackBar1.Value;
-            DateTime dia = dateTimePicker1.Value;
 
             switch (comboBox1.SelectedIndex)
             {
                 case 0:
                     {
-                        for (int n = 0; n < dados.Count; n++)
-                        {
-                            if (dados[n].horario >= dia.AddHours(offset) && dados[n].horario <= dia.AddHours(offset + 24))
-                            {
-                                grafico.Series[0].Points.AddXY(dados[n].horario, dados[n].temperatura);
-                            }
-                        }
-                        grafico.Series[0].Color = Color.Red;
+                        for (int x = 0; x < dados.Count; x++)
+                            grafico.Series[0].Points.AddXY(dados[x].horario, dados[x].temperatura);
+
+                        grafico.Series[0].Color = Color.Red;                      
                         grafico.ChartAreas[0].AxisY.Title = "Temperatura (ºC)";
+                        grafico.ChartAreas[0].AxisY.MinorGrid.Interval = 1;
                         break;
                     }
                 case 1:
                     {
-                        for (int n = 0; n < dados.Count; n++)
-                        {
-                            if (dados[n].horario >= dia.AddHours(offset) && dados[n].horario <= dia.AddHours(offset + 24))
-                            {
-                                grafico.Series[0].Points.AddXY(dados[n].horario, dados[n].umidade);
-                            }
-                        }
+                        for (int x = 0; x < dados.Count; x++)
+                            grafico.Series[0].Points.AddXY(dados[x].horario, dados[x].umidade);
+
                         grafico.Series[0].Color = Color.Blue;
                         grafico.ChartAreas[0].AxisY.Title = "Umidade (%)";
+                        grafico.ChartAreas[0].AxisY.MinorGrid.Interval = 2.5f;
                         break;
                     }
                 case 2:
                     {
-                        for (int n = 0; n < dados.Count; n++)
-                        {
-                            if (dados[n].horario >= dia.AddHours(offset) && dados[n].horario <= dia.AddHours(offset + 24))
-                            {
-                                grafico.Series[0].Points.AddXY(dados[n].horario, dados[n].pressao);
-                            }
-                        }
+                        for (int x = 0; x < dados.Count; x++)
+                            grafico.Series[0].Points.AddXY(dados[x].horario, dados[x].pressao);
+
                         grafico.Series[0].Color = Color.Green;
                         grafico.ChartAreas[0].AxisY.Title = "Pressão (hPa)";
+                        grafico.ChartAreas[0].AxisY.MinorGrid.Interval = 1;
                         break;
                     }
             }
@@ -122,12 +111,6 @@ namespace Teste_Application
         #endregion
 
         #region Events
-        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
-        {
-            trackBar1.Value = 0;
-            PlotGraph();
-        }
-
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             PlotGraph();
@@ -138,12 +121,6 @@ namespace Teste_Application
             GetData();
             labelAtualizacao.Text = string.Format("Última atualização: {0}", DateTime.Now);
             labelPacote.Text = string.Format("Último pacote: {0}", dados[0].horario);
-            PlotGraph();
-        }
-
-        private void trackBar1_ValueChanged(object sender, EventArgs e)
-        {
-            toolTip1.SetToolTip(trackBar1, trackBar1.Value.ToString());
             PlotGraph();
         }
         #endregion

@@ -53,12 +53,17 @@
             chartArea1.AxisX.ScaleView.SmallScrollMinSizeType = System.Windows.Forms.DataVisualization.Charting.DateTimeIntervalType.Hours;
             chartArea1.AxisX.ScrollBar.BackColor = System.Drawing.Color.White;
             chartArea1.AxisX.ScrollBar.ButtonStyle = System.Windows.Forms.DataVisualization.Charting.ScrollBarButtonStyles.SmallScroll;
+            chartArea1.AxisX.ScrollBar.IsPositionedInside = false;
             chartArea1.AxisX.ScrollBar.Size = 15D;
+            chartArea1.AxisY.Enabled = System.Windows.Forms.DataVisualization.Charting.AxisEnabled.True;
             chartArea1.AxisY.IsStartedFromZero = false;
             chartArea1.AxisY.MinorGrid.Enabled = true;
             chartArea1.AxisY.MinorGrid.LineColor = System.Drawing.Color.Silver;
+            chartArea1.AxisY2.Enabled = System.Windows.Forms.DataVisualization.Charting.AxisEnabled.True;
+            chartArea1.AxisY2.IsStartedFromZero = false;
             chartArea1.Name = "ChartArea1";
             this.grafico.ChartAreas.Add(chartArea1);
+            legend1.Enabled = false;
             legend1.Name = "Legend1";
             this.grafico.Legends.Add(legend1);
             this.grafico.Location = new System.Drawing.Point(12, 76);
@@ -71,7 +76,7 @@
             series1.Legend = "Legend1";
             series1.Name = "Series1";
             this.grafico.Series.Add(series1);
-            this.grafico.Size = new System.Drawing.Size(981, 300);
+            this.grafico.Size = new System.Drawing.Size(981, 301);
             this.grafico.TabIndex = 0;
             this.grafico.Text = "chart1";
             // 
@@ -85,9 +90,9 @@
             "Temperatura",
             "Umidade",
             "Pressão"});
-            this.comboBox1.Location = new System.Drawing.Point(12, 53);
+            this.comboBox1.Location = new System.Drawing.Point(283, 6);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(225, 21);
+            this.comboBox1.Size = new System.Drawing.Size(421, 21);
             this.comboBox1.TabIndex = 2;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
@@ -95,7 +100,7 @@
             // 
             this.labelNode.AutoSize = true;
             this.labelNode.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelNode.Location = new System.Drawing.Point(21, 7);
+            this.labelNode.Location = new System.Drawing.Point(21, 4);
             this.labelNode.Name = "labelNode";
             this.labelNode.Size = new System.Drawing.Size(256, 25);
             this.labelNode.TabIndex = 3;
@@ -105,7 +110,7 @@
             // 
             this.labelAtualizacao.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelAtualizacao.AutoSize = true;
-            this.labelAtualizacao.Location = new System.Drawing.Point(790, 52);
+            this.labelAtualizacao.Location = new System.Drawing.Point(791, 9);
             this.labelAtualizacao.Name = "labelAtualizacao";
             this.labelAtualizacao.Size = new System.Drawing.Size(202, 13);
             this.labelAtualizacao.TabIndex = 4;
@@ -113,9 +118,9 @@
             // 
             // labelPacote
             // 
-            this.labelPacote.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelPacote.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelPacote.AutoSize = true;
-            this.labelPacote.Location = new System.Drawing.Point(812, 363);
+            this.labelPacote.Location = new System.Drawing.Point(808, 61);
             this.labelPacote.Name = "labelPacote";
             this.labelPacote.Size = new System.Drawing.Size(181, 13);
             this.labelPacote.TabIndex = 5;
@@ -124,7 +129,7 @@
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(709, 47);
+            this.button1.Location = new System.Drawing.Point(710, 4);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 7;
@@ -134,7 +139,7 @@
             // 
             // Form1
             // 
-            this.ClientSize = new System.Drawing.Size(1001, 381);
+            this.ClientSize = new System.Drawing.Size(1001, 382);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.labelPacote);
             this.Controls.Add(this.labelAtualizacao);

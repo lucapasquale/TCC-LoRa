@@ -83,7 +83,8 @@ namespace Teste_Application
 
                         grafico.Series[0].Color = Color.Red;                      
                         grafico.ChartAreas[0].AxisY.Title = "Temperatura (ºC)";
-                        grafico.ChartAreas[0].AxisY.MinorGrid.Interval = 1;
+                        grafico.ChartAreas[0].AxisY.MinorGrid.Interval = 0.5f;
+                        grafico.ChartAreas[0].AxisY2.MinorGrid.Interval = 0.5f;
                         break;
                     }
                 case 1:

@@ -10,12 +10,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Teste_Application
 {
     public partial class Form1 : Form
     {
-        public List<DataObject> dados = new List<DataObject>();
+        public List<ClimateObject> dados = new List<ClimateObject>();
 
         public Form1()
         {
@@ -34,10 +35,10 @@ namespace Teste_Application
             var request = new RestRequest();
             IRestResponse response = client.Execute(request);
 
-            List<DataObject> listaJSON = new List<DataObject>();
-            listaJSON = JsonConvert.DeserializeObject<List<DataObject>>(response.Content);
+            List<ClimateObject> listaJSON = new List<ClimateObject>();
+            listaJSON = JsonConvert.DeserializeObject<List<ClimateObject>>(response.Content);
 
-            foreach (DataObject n in listaJSON)
+            foreach (ClimateObject n in listaJSON)
             {
                 //Pega o horario em DateTime
                 n.horario = DateTime.Parse(n.timeStamp);
@@ -57,56 +58,36 @@ namespace Teste_Application
 
         void ConfigureForm()
         {
+            PlotValues();
+
             grafico.ChartAreas[0].AxisX.Title = "Horário";
             grafico.ChartAreas[0].AxisX.IntervalType = System.Windows.Forms.DataVisualization.Charting.DateTimeIntervalType.Hours;
             grafico.ChartAreas[0].AxisX.Interval = 1;
             grafico.ChartAreas[0].AxisX.LabelStyle.Format = "HH:mm\nd/M";
-            grafico.Series[0].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastPoint;
 
-            comboBox1.SelectedIndex = 0;
+            // Set custom chart area position
+            grafico.ChartAreas[0].Position = new ElementPosition(13, 5, 85, 90);
+            grafico.ChartAreas[0].InnerPlotPosition = new ElementPosition(0, 0, 90, 75);
+
+            // Create extra Y axis for second and third series
+            CreateYAxis(grafico, grafico.ChartAreas[0], grafico.Series[1], 10, 8);
+            CreateYAxis(grafico, grafico.ChartAreas[0], grafico.Series[2], 13, 8);
 
             labelAtualizacao.Text = string.Format("Última atualização: {0}", DateTime.Now);
             labelPacote.Text = string.Format("Último pacote: {0}", dados[0].horario);
-            PlotGraph();
+
+            var list = new BindingList<ClimateObject>(dados);
+            dataGridView1.DataSource = list;
         }
 
-        void PlotGraph()
+        void PlotValues()
         {
-            grafico.Series[0].Points.Clear();
-
-            switch (comboBox1.SelectedIndex)
+            for (int x = 0; x < dados.Count; x++)
             {
-                case 0:
-                    {
-                        for (int x = 0; x < dados.Count; x++)
-                            grafico.Series[0].Points.AddXY(dados[x].horario, dados[x].temperatura);
+                grafico.Series["Umidade"].Points.AddXY(dados[x].horario, dados[x].umidade);
+                grafico.Series["Temperatura"].Points.AddXY(dados[x].horario, dados[x].temperatura);
+                grafico.Series["Pressao"].Points.AddXY(dados[x].horario, dados[x].pressao);
 
-                        grafico.Series[0].Color = Color.Red;                      
-                        grafico.ChartAreas[0].AxisY.Title = "Temperatura (ºC)";
-                        grafico.ChartAreas[0].AxisY.MinorGrid.Interval = 0.5f;
-                        grafico.ChartAreas[0].AxisY2.MinorGrid.Interval = 0.5f;
-                        break;
-                    }
-                case 1:
-                    {
-                        for (int x = 0; x < dados.Count; x++)
-                            grafico.Series[0].Points.AddXY(dados[x].horario, dados[x].umidade);
-
-                        grafico.Series[0].Color = Color.Blue;
-                        grafico.ChartAreas[0].AxisY.Title = "Umidade (%)";
-                        grafico.ChartAreas[0].AxisY.MinorGrid.Interval = 2.5f;
-                        break;
-                    }
-                case 2:
-                    {
-                        for (int x = 0; x < dados.Count; x++)
-                            grafico.Series[0].Points.AddXY(dados[x].horario, dados[x].pressao);
-
-                        grafico.Series[0].Color = Color.Green;
-                        grafico.ChartAreas[0].AxisY.Title = "Pressão (hPa)";
-                        grafico.ChartAreas[0].AxisY.MinorGrid.Interval = 1;
-                        break;
-                    }
             }
         }
         #endregion
@@ -114,7 +95,7 @@ namespace Teste_Application
         #region Events
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            PlotGraph();
+            PlotValues();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -122,43 +103,71 @@ namespace Teste_Application
             GetData();
             labelAtualizacao.Text = string.Format("Última atualização: {0}", DateTime.Now);
             labelPacote.Text = string.Format("Último pacote: {0}", dados[0].horario);
-            PlotGraph();
+            PlotValues();
         }
-        #endregion
-    }
+        #endregion  
 
-    public class DataObject
-    {
-        public float temperatura { get; set; }
-        public float umidade { get; set; }
-        public int pressao { get; set; }
-        public DateTime horario { get; set; }
+        /// <summary>
+        /// Creates Y axis for the specified series.
+        /// </summary>
+        /// <param name="chart">Chart control.</param>
+        /// <param name="area">Original chart area.</param>
+        /// <param name="series">Series.</param>
+        /// <param name="axisOffset">New Y axis offset in relative coordinates.</param>
+        /// <param name="labelsSize">Extra space for new Y axis labels in relative coordinates.</param>
+        public void CreateYAxis(Chart chart, ChartArea area, Series series, float axisOffset, float labelsSize)
+        {
+            // Create new chart area for original series
+            ChartArea areaSeries = chart.ChartAreas.Add("ChartArea_" + series.Name);
+            areaSeries.BackColor = Color.Transparent;
+            areaSeries.BorderColor = Color.Transparent;
+            areaSeries.Position.FromRectangleF(area.Position.ToRectangleF());
+            areaSeries.InnerPlotPosition.FromRectangleF(area.InnerPlotPosition.ToRectangleF());
+            areaSeries.AxisX.MajorGrid.Enabled = false;
+            areaSeries.AxisX.MajorTickMark.Enabled = false;
+            areaSeries.AxisX.LabelStyle.Enabled = false;
+            areaSeries.AxisY.MajorGrid.Enabled = false;
+            areaSeries.AxisY.MajorTickMark.Enabled = false;
+            areaSeries.AxisY.LabelStyle.Enabled = false;
+            areaSeries.AxisY.IsStartedFromZero = area.AxisY.IsStartedFromZero;
 
-        public int Id { get; set; }
-        public string timeStamp { get; set; }
-        public string dataFrame { get; set; }
-        public int fcnt { get; set; }
-        public int port { get; set; }
-        public int rssi { get; set; }
-        public float snr { get; set; }
-        public int sr_used { get; set; }
-        public bool decrypted { get; set; }
-    }
+            areaSeries.AxisX.ScaleView = area.AxisX.ScaleView;
+            areaSeries.AxisX.ScrollBar.Enabled = false;
 
-    public class NodeObject
-    {
-        public string devEUI { get; set; }
-        public int device_status { get; set; }
-        public int dl_fcnt { get; set; }
-        public int device_class { get; set; }
-        public int registration_status { get; set; }
-        public int expiry_time_uplink { get; set; }
-        public int expiry_time_downlink { get; set; }
-        public int max_allowed_dutycycle { get; set; }
-        public int expected_avr_dutycycle { get; set; }
-        public int quo_class { get; set; }
-        public string last_reception { get; set; }
-        public string appEUI { get; set; }
-        public string coment { get; set; }
+            series.ChartArea = areaSeries.Name;
+
+            // Create new chart area for axis
+            ChartArea areaAxis = chart.ChartAreas.Add("AxisY_" + series.ChartArea);
+            areaAxis.BackColor = Color.Transparent;
+            areaAxis.BorderColor = Color.Transparent;
+            areaAxis.Position.FromRectangleF(chart.ChartAreas[series.ChartArea].Position.ToRectangleF());
+            areaAxis.InnerPlotPosition.FromRectangleF(chart.ChartAreas[series.ChartArea].InnerPlotPosition.ToRectangleF());
+
+            // Create a copy of specified series
+            Series seriesCopy = chart.Series.Add(series.Name + "_Copy");
+            seriesCopy.ChartType = series.ChartType;
+            foreach (DataPoint point in series.Points)
+            {
+                seriesCopy.Points.AddXY(point.XValue, point.YValues[0]);
+            }
+
+            // Hide copied series
+            seriesCopy.IsVisibleInLegend = false;
+            seriesCopy.Color = Color.Transparent;
+            seriesCopy.BorderColor = Color.Transparent;
+            seriesCopy.ChartArea = areaAxis.Name;
+
+            // Disable grid lines & tickmarks
+            areaAxis.AxisX.LineWidth = 0;
+            areaAxis.AxisX.MajorGrid.Enabled = false;
+            areaAxis.AxisX.MajorTickMark.Enabled = false;
+            areaAxis.AxisX.LabelStyle.Enabled = false;
+            areaAxis.AxisY.MajorGrid.Enabled = false;
+            areaAxis.AxisY.IsStartedFromZero = area.AxisY.IsStartedFromZero;
+
+            // Adjust area position
+            areaAxis.Position.X -= axisOffset;
+            areaAxis.InnerPlotPosition.X += labelsSize;
+        }
     }
 }

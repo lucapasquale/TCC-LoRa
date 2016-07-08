@@ -43,15 +43,18 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.graficos = new System.Windows.Forms.TabPage();
+            this.data = new System.Windows.Forms.TabPage();
+            this.mapa = new System.Windows.Forms.TabPage();
+            this.gmap = new GMap.NET.WindowsForms.GMapControl();
             this.dataObjectBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.dataObjectBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.grafico)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage3.SuspendLayout();
+            this.graficos.SuspendLayout();
+            this.data.SuspendLayout();
+            this.mapa.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataObjectBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataObjectBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -72,36 +75,32 @@
             chartArea1.AxisY.IsStartedFromZero = false;
             chartArea1.AxisY.MinorGrid.Enabled = true;
             chartArea1.AxisY.MinorGrid.LineColor = System.Drawing.Color.Silver;
-            chartArea1.AxisY.Title = "Temperatura";
             chartArea1.AxisY2.Enabled = System.Windows.Forms.DataVisualization.Charting.AxisEnabled.True;
             chartArea1.AxisY2.IsStartedFromZero = false;
-            chartArea1.AxisY2.Title = "Umidade";
+            chartArea1.AxisY2.Title = "Pressão (hPa)";
             chartArea1.Name = "ChartArea1";
             this.grafico.ChartAreas.Add(chartArea1);
-            legend1.Enabled = false;
             legend1.Name = "Legend1";
             this.grafico.Legends.Add(legend1);
             this.grafico.Location = new System.Drawing.Point(6, 3);
             this.grafico.Name = "grafico";
-            series1.BorderWidth = 4;
+            series1.BorderWidth = 2;
             series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastPoint;
-            series1.Color = System.Drawing.Color.Blue;
+            series1.Color = System.Drawing.Color.LightGreen;
             series1.Legend = "Legend1";
-            series1.Name = "Umidade";
-            series2.BorderWidth = 4;
+            series1.Name = "Pressao";
+            series2.BorderWidth = 2;
             series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastPoint;
-            series2.Color = System.Drawing.Color.Red;
-            series2.IsVisibleInLegend = false;
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series2.Color = System.Drawing.Color.Blue;
             series2.Legend = "Legend1";
-            series2.Name = "Temperatura";
-            series3.BorderWidth = 4;
+            series2.Name = "Umidade";
+            series3.BorderWidth = 2;
             series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.StepLine;
-            series3.Color = System.Drawing.Color.Green;
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series3.Color = System.Drawing.Color.Red;
             series3.Legend = "Legend1";
-            series3.Name = "Pressao";
+            series3.Name = "Temperatura";
             this.grafico.Series.Add(series1);
             this.grafico.Series.Add(series2);
             this.grafico.Series.Add(series3);
@@ -180,8 +179,9 @@
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.mapa);
+            this.tabControl1.Controls.Add(this.graficos);
+            this.tabControl1.Controls.Add(this.data);
             this.tabControl1.Location = new System.Drawing.Point(12, 33);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -189,27 +189,65 @@
             this.tabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControl1.TabIndex = 9;
             // 
-            // tabPage1
+            // graficos
             // 
-            this.tabPage1.Controls.Add(this.grafico);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1148, 456);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Gráficos";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.graficos.Controls.Add(this.grafico);
+            this.graficos.Location = new System.Drawing.Point(4, 22);
+            this.graficos.Name = "graficos";
+            this.graficos.Padding = new System.Windows.Forms.Padding(3);
+            this.graficos.Size = new System.Drawing.Size(1148, 456);
+            this.graficos.TabIndex = 0;
+            this.graficos.Text = "Gráficos";
+            this.graficos.UseVisualStyleBackColor = true;
             // 
-            // tabPage3
+            // data
             // 
-            this.tabPage3.Controls.Add(this.dataGridView1);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(1148, 456);
-            this.tabPage3.TabIndex = 1;
-            this.tabPage3.Text = "Data";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.data.Controls.Add(this.dataGridView1);
+            this.data.Location = new System.Drawing.Point(4, 22);
+            this.data.Name = "data";
+            this.data.Padding = new System.Windows.Forms.Padding(3);
+            this.data.Size = new System.Drawing.Size(1148, 456);
+            this.data.TabIndex = 1;
+            this.data.Text = "Data";
+            this.data.UseVisualStyleBackColor = true;
+            // 
+            // mapa
+            // 
+            this.mapa.Controls.Add(this.gmap);
+            this.mapa.Location = new System.Drawing.Point(4, 22);
+            this.mapa.Name = "mapa";
+            this.mapa.Size = new System.Drawing.Size(1148, 456);
+            this.mapa.TabIndex = 2;
+            this.mapa.Text = "Mapa";
+            this.mapa.UseVisualStyleBackColor = true;
+            // 
+            // gmap
+            // 
+            this.gmap.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gmap.Bearing = 0F;
+            this.gmap.CanDragMap = true;
+            this.gmap.EmptyTileColor = System.Drawing.Color.Navy;
+            this.gmap.GrayScaleMode = false;
+            this.gmap.HelperLineOption = GMap.NET.WindowsForms.HelperLineOptions.DontShow;
+            this.gmap.LevelsKeepInMemmory = 5;
+            this.gmap.Location = new System.Drawing.Point(3, 3);
+            this.gmap.MarkersEnabled = true;
+            this.gmap.MaxZoom = 18;
+            this.gmap.MinZoom = 2;
+            this.gmap.MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionAndCenter;
+            this.gmap.Name = "gmap";
+            this.gmap.NegativeMode = false;
+            this.gmap.PolygonsEnabled = true;
+            this.gmap.RetryLoadTile = 0;
+            this.gmap.RoutesEnabled = true;
+            this.gmap.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
+            this.gmap.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
+            this.gmap.ShowTileGridLines = false;
+            this.gmap.Size = new System.Drawing.Size(1142, 450);
+            this.gmap.TabIndex = 0;
+            this.gmap.Zoom = 16D;
             // 
             // dataObjectBindingSource1
             // 
@@ -231,8 +269,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.grafico)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage3.ResumeLayout(false);
+            this.graficos.ResumeLayout(false);
+            this.data.ResumeLayout(false);
+            this.mapa.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataObjectBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataObjectBindingSource)).EndInit();
             this.ResumeLayout(false);
@@ -251,10 +290,12 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.BindingSource dataObjectBindingSource;
         private System.Windows.Forms.BindingSource dataObjectBindingSource1;
-        private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage data;
+        private System.Windows.Forms.TabPage graficos;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage mapa;
+        private GMap.NET.WindowsForms.GMapControl gmap;
     }
 }
 

@@ -11,26 +11,40 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using GMap.NET;
+using GMap.NET.WindowsForms;
+using GMap.NET.WindowsForms.Markers;
 
 namespace Teste_Application
 {
     public partial class Form1 : Form
     {
         public List<ClimateObject> dados = new List<ClimateObject>();
+        GMapOverlay markersOverlay = new GMapOverlay("markers");
 
         public Form1()
         {
             InitializeComponent();
             GetData();
             ConfigureForm();
+
+            //Configura mapa
+            gmap.MapProvider = GMap.NET.MapProviders.BingMapProvider.Instance;
+            GMap.NET.GMaps.Instance.Mode = GMap.NET.AccessMode.ServerOnly;
+            gmap.Position = new PointLatLng(-23.6490855, -46.5742101);
+            gmap.Overlays.Add(markersOverlay);
         }
 
         #region Private
         void GetData()
         {
+            string acc = "maua_ceun";
+            string pass = "Maua2016";
+            string node = "0004A30B001A674B";
+
             var client = new RestClient();
-            client.BaseUrl = new Uri("https://artimar.orbiwise.com/rest/nodes/0004A30B001A674B/payloads/ul");
-            client.Authenticator = new HttpBasicAuthenticator("maua_ceun", "Maua2016");
+            client.BaseUrl = new Uri("https://artimar.orbiwise.com/rest/nodes/" + node + "/payloads/ul");
+            client.Authenticator = new HttpBasicAuthenticator(acc, pass);
 
             var request = new RestRequest();
             IRestResponse response = client.Execute(request);
@@ -52,8 +66,16 @@ namespace Teste_Application
                 n.umidade = int.Parse(n.dataFrame.Substring(4, 4), System.Globalization.NumberStyles.HexNumber) / 10f;
                 n.pressao = int.Parse(n.dataFrame.Substring(8, 4), System.Globalization.NumberStyles.HexNumber);
             }
-
             dados = listaJSON.OrderByDescending(o => o.horario).ToList();
+
+            //Adiciona marker no mapa
+            markersOverlay.Clear();
+               
+            GMarkerGoogle marker = new GMarkerGoogle(new PointLatLng(-23.6490855, -46.5742101), GMarkerGoogleType.blue);
+            marker.ToolTip = new GMapToolTip(marker);
+            marker.ToolTipText = String.Format("Dia: {0}/{1}\nHora: {2}:{3}\nTemp: {4} ºC\nUmid: {5} %\nPres: {6} hPa",
+                dados[0].horario.Day, dados[0].horario.Month, dados[0].horario.Hour, dados[0].horario.Minute, dados[0].temperatura, dados[0].umidade, dados[0].pressao);
+            markersOverlay.Markers.Add(marker);
         }
 
         void ConfigureForm()
@@ -66,16 +88,17 @@ namespace Teste_Application
             grafico.ChartAreas[0].AxisX.LabelStyle.Format = "HH:mm\nd/M";
 
             // Set custom chart area position
-            grafico.ChartAreas[0].Position = new ElementPosition(13, 5, 85, 90);
+            grafico.ChartAreas[0].Position = new ElementPosition(16, 5, 85, 90);
             grafico.ChartAreas[0].InnerPlotPosition = new ElementPosition(0, 0, 90, 75);
 
             // Create extra Y axis for second and third series
-            CreateYAxis(grafico, grafico.ChartAreas[0], grafico.Series[1], 10, 8);
-            CreateYAxis(grafico, grafico.ChartAreas[0], grafico.Series[2], 13, 8);
+            CreateYAxis(grafico, grafico.ChartAreas[0], grafico.Series["Temperatura"], 10, 8, "Temperatura (ºC)");
+            CreateYAxis(grafico, grafico.ChartAreas[0], grafico.Series["Umidade"], 16, 8, "Umidade (%)");
 
             labelAtualizacao.Text = string.Format("Última atualização: {0}", DateTime.Now);
             labelPacote.Text = string.Format("Último pacote: {0}", dados[0].horario);
 
+            // Configura o dataGrid
             var list = new BindingList<ClimateObject>(dados);
             dataGridView1.DataSource = list;
         }
@@ -87,7 +110,6 @@ namespace Teste_Application
                 grafico.Series["Umidade"].Points.AddXY(dados[x].horario, dados[x].umidade);
                 grafico.Series["Temperatura"].Points.AddXY(dados[x].horario, dados[x].temperatura);
                 grafico.Series["Pressao"].Points.AddXY(dados[x].horario, dados[x].pressao);
-
             }
         }
         #endregion
@@ -115,7 +137,7 @@ namespace Teste_Application
         /// <param name="series">Series.</param>
         /// <param name="axisOffset">New Y axis offset in relative coordinates.</param>
         /// <param name="labelsSize">Extra space for new Y axis labels in relative coordinates.</param>
-        public void CreateYAxis(Chart chart, ChartArea area, Series series, float axisOffset, float labelsSize)
+        public void CreateYAxis(Chart chart, ChartArea area, Series series, float axisOffset, float labelsSize, string title)
         {
             // Create new chart area for original series
             ChartArea areaSeries = chart.ChartAreas.Add("ChartArea_" + series.Name);
@@ -168,6 +190,9 @@ namespace Teste_Application
             // Adjust area position
             areaAxis.Position.X -= axisOffset;
             areaAxis.InnerPlotPosition.X += labelsSize;
+
+            //Configura titulo e numero de intervalos
+            areaAxis.AxisY.Title = title;
         }
     }
 }

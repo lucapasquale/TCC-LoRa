@@ -5,9 +5,13 @@ C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste App
 C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\bin\Debug\RestSharp.dll
 C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\bin\Debug\Newtonsoft.Json.xml
 C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\bin\Debug\RestSharp.xml
-C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\obj\Debug\Teste Application.csprojResolveAssemblyReference.cache
 C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\obj\Debug\Teste_Application.Form1.resources
 C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\obj\Debug\Teste_Application.Properties.Resources.resources
 C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\obj\Debug\Teste Application.csproj.GenerateResource.Cache
 C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\obj\Debug\Teste Application.exe
 C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\obj\Debug\Teste Application.pdb
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\obj\Debug\Teste Application.csprojResolveAssemblyReference.cache
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\bin\Debug\GMap.NET.Core.dll
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\bin\Debug\GMap.NET.WindowsForms.dll
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\bin\Debug\GMap.NET.Core.xml
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\bin\Debug\GMap.NET.WindowsForms.xml

@@ -1,0 +1,17 @@
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\bin\Release\Teste Application.exe.config
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\bin\Release\Teste Application.exe
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\bin\Release\Teste Application.pdb
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\bin\Release\GMap.NET.Core.dll
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\bin\Release\GMap.NET.WindowsForms.dll
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\bin\Release\Newtonsoft.Json.dll
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\bin\Release\RestSharp.dll
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\bin\Release\GMap.NET.Core.xml
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\bin\Release\GMap.NET.WindowsForms.xml
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\bin\Release\Newtonsoft.Json.xml
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\bin\Release\RestSharp.xml
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\obj\Release\Teste Application.csprojResolveAssemblyReference.cache
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\obj\Release\Teste_Application.Form1.resources
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\obj\Release\Teste_Application.Properties.Resources.resources
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\obj\Release\Teste Application.csproj.GenerateResource.Cache
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\obj\Release\Teste Application.exe
+C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\Teste Application\Teste Application\obj\Release\Teste Application.pdb

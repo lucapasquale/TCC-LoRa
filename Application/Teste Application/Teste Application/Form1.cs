@@ -105,6 +105,9 @@ namespace Teste_Application
 
         void PlotValues()
         {
+            for (int n = 0; n < grafico.Series.Count; n++)
+                grafico.Series[n].Points.Clear();
+
             for (int x = 0; x < dados.Count; x++)
             {
                 grafico.Series["Umidade"].Points.AddXY(dados[x].horario, dados[x].umidade);

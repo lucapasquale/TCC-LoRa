@@ -11,6 +11,5 @@ namespace Teste_Application
         public float temperatura { get; set; }
         public float umidade { get; set; }
         public int pressao { get; set; }
-        public DateTime horario { get; set; }
     }
 }

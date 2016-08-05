@@ -1,0 +1,8 @@
+AndroidLoRa.MainActivity, AndroidLoRa;md5c25a9ae955577c965479766a6f40e46f.MainActivity
+AndroidLoRa.MainActivity, AndroidLoRa, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md5c25a9ae955577c965479766a6f40e46f.MainActivity
+AndroidLoRa.MainActivity;md5c25a9ae955577c965479766a6f40e46f.MainActivity
+androidlora.MainActivity;md5c25a9ae955577c965479766a6f40e46f.MainActivity
+OxyPlot.Xamarin.Android.PlotView, OxyPlot.Xamarin.Android;md5299a304c8be8cf3eb65572c1cb1ae9a4.PlotView
+OxyPlot.Xamarin.Android.PlotView, OxyPlot.Xamarin.Android, Version=2015.1.741.0, Culture=neutral, PublicKeyToken=null;md5299a304c8be8cf3eb65572c1cb1ae9a4.PlotView
+OxyPlot.Xamarin.Android.PlotView;md5299a304c8be8cf3eb65572c1cb1ae9a4.PlotView
+oxyplot.xamarin.android.PlotView;md5299a304c8be8cf3eb65572c1cb1ae9a4.PlotView

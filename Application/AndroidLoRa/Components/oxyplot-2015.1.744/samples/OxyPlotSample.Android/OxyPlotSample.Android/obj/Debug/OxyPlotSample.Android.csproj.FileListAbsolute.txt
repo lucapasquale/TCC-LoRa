@@ -1,1 +1,0 @@
-C:\Users\lucap\Documents\GitHub\TCC-LoRa\Application\AndroidLoRa\Components\oxyplot-2015.1.744\samples\OxyPlotSample.Android\OxyPlotSample.Android\obj\Debug\OxyPlotSample.Android.csprojResolveAssemblyReference.cache

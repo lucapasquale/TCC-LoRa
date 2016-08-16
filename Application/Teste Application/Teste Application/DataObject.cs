@@ -8,7 +8,7 @@ namespace Teste_Application
 {
     public class DataObject
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string timeStamp { get; set; }
         public DateTime horario { get; set; }
         public string dataFrame { get; set; }

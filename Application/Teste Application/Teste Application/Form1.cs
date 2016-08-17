@@ -25,14 +25,23 @@ namespace Teste_Application
         public Form1()
         {
             InitializeComponent();
-            GetData();
-            ConfigureForm();
+            try
+            {
+                GetData();
+                ConfigureForm();
 
-            //Configura mapa
-            gmap.MapProvider = GMap.NET.MapProviders.BingMapProvider.Instance;
-            GMap.NET.GMaps.Instance.Mode = GMap.NET.AccessMode.ServerOnly;
-            gmap.Position = new PointLatLng(-23.6490855, -46.5742101);
-            gmap.Overlays.Add(markersOverlay);
+                //Configura mapa
+                gmap.MapProvider = GMap.NET.MapProviders.BingMapProvider.Instance;
+                GMap.NET.GMaps.Instance.Mode = GMap.NET.AccessMode.ServerOnly;
+                gmap.Position = new PointLatLng(-23.6490855, -46.5742101);
+                gmap.Overlays.Add(markersOverlay);
+            }
+            catch
+            {
+                labelNode.Text = "Erro ao conectar ao servidor";
+                tabControl1.Enabled = false;
+            }
+            
         }
 
         #region Private
@@ -51,6 +60,8 @@ namespace Teste_Application
 
             List<ClimateObject> listaJSON = new List<ClimateObject>();
             listaJSON = JsonConvert.DeserializeObject<List<ClimateObject>>(response.Content);
+
+
 
             foreach (ClimateObject n in listaJSON)
             {
@@ -105,6 +116,9 @@ namespace Teste_Application
 
         void PlotValues()
         {
+            for (int n = 0; n < grafico.Series.Count; n++)
+                grafico.Series[n].Points.Clear();
+
             for (int x = 0; x < dados.Count; x++)
             {
                 grafico.Series["Umidade"].Points.AddXY(dados[x].horario, dados[x].umidade);
@@ -122,10 +136,19 @@ namespace Teste_Application
 
         private void button1_Click(object sender, EventArgs e)
         {
-            GetData();
             labelAtualizacao.Text = string.Format("Última atualização: {0}", DateTime.Now);
-            labelPacote.Text = string.Format("Último pacote: {0}", dados[0].horario);
-            PlotValues();
+            try
+            {
+                GetData();
+                labelPacote.Text = string.Format("Último pacote: {0}", dados[0].horario);
+                PlotValues();
+            }
+            catch
+            {
+                labelNode.Text = "Erro ao conectar ao servidor";
+                tabControl1.Enabled = false;
+            }
+           
         }
         #endregion  
 

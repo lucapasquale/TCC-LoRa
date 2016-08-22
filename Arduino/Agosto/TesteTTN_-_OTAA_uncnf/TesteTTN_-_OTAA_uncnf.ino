@@ -3,12 +3,12 @@
 TheThingsUno ttu;
 
 #include <DHT.h>
-#define DHTPIN 2
+#define DHTPIN 5
 #define DHTTYPE DHT22
 DHT dht(DHTPIN, DHTTYPE);
 
 #include <SoftwareSerial.h>
-SoftwareSerial Serial1(3, 4);
+SoftwareSerial Serial1(2, 3);
 #define debugSerial Serial
 #define loraSerial Serial1
 
@@ -42,8 +42,8 @@ void setup() {
 void loop() {
   LeSensores();
   ttu.sendBytes(data, sizeof(data), 10, false);
-  
-  for (int t = 0; t < 15 * 60; t++){
+
+  for (int t = 0; t < 15 * 60; t++) {
     delay(1000);
   }
 }
@@ -52,12 +52,12 @@ void LeSensores() {
   int16_t temperature = dht.readTemperature() * 10;
   data[0] = highByte(temperature);
   data[1] = lowByte(temperature);
-  debugPrint("Temperatura: "); debugPrintLn(temperature);
-  
+  debugPrint("Temperatura: "); debugPrintLn(temperature / 10.0);
+
   int16_t humidity = dht.readHumidity() * 10;
   data[2] = highByte(humidity);
   data[3] = lowByte(humidity);
-  debugPrint("Umidade: "); debugPrintLn(humidity);
+  debugPrint("Umidade: "); debugPrintLn(humidity / 10.0);
 
   float vout = analogRead(A0);    //Le valor pino analogico sensor de pressao
   vout = (vout * 5.0) / 1023.0;   //Converte valor 0-1023 para 0-5V
@@ -65,5 +65,5 @@ void LeSensores() {
   data[4] = highByte(pres);
   data[5] = lowByte(pres);
   debugPrint("Pressao: "); debugPrintLn(pres);
-  }
 }
+

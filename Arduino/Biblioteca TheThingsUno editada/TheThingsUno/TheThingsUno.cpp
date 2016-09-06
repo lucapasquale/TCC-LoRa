@@ -80,7 +80,7 @@ bool TheThingsUno::sendCommand(String cmd, const byte *buf, int length, int wait
   return waitForOK(waitTime);
 }
 
-void TheThingsUno::reset(bool adr, int sf, int fsb) {
+void TheThingsUno::reset(bool adr, bool maxPower, int sf, int fsb, int retx) {
 #if !ADR_SUPPORTED
   adr = false;
 #endif
@@ -96,6 +96,12 @@ void TheThingsUno::reset(bool adr, int sf, int fsb) {
   debugPrintLn("Version is " + version + ", model is " + model);
 
   sendCommand("mac set adr " + String(adr ? "on" : "off"));
+
+  if (maxPower == true){
+    sendCommand("mac set pwridx 10");
+  }
+  
+  sendCommand("mac set retx " + String(retx));
 
   disableChannels(8,71);
   }

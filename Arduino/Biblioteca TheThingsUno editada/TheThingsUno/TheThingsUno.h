@@ -10,6 +10,7 @@
 #define DEFAULT_WAIT_TIME 120
 #define DEFAULT_SF 7
 #define DEFAULT_FSB 2
+#define DEFAULT_RETX 5
 
 // Set ADR off as it is currently not supported by The Things Network
 // The RN2xx3 module slows down to SF12 when no datarate commands are
@@ -46,7 +47,7 @@ class TheThingsUno
     int downlinkPort;
     byte downlink[64];
     void init(Stream& modemStream, Stream& debugStream);
-    void reset(bool adr = true, int sf = DEFAULT_SF, int fsb = DEFAULT_FSB);
+    void reset(bool adr = true, bool maxPower = true, int sf = DEFAULT_SF, int fsb = DEFAULT_FSB, int retx = DEFAULT_RETX);
     bool personalize(const byte devAddr[4], const byte nwkSKey[16], const byte appSKey[16]);
     bool join(const byte appEui[8], const byte appKey[16]);
     int sendBytes(const byte* buffer, int length, int port = 1, bool confirm = false);
